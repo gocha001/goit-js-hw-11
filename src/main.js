@@ -1,6 +1,8 @@
 import searchImagesByQuery from './js/pixabay-api.js';
+
 import createImagesMarkup from './js/render-functions.js';
 import { container } from './js/render-functions.js';
+
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
@@ -20,7 +22,6 @@ function handleSubmit(event) {
   sear = search.text.value.trim().toLowerCase();
 
   if (sear == 0) {
-    // alert(`All form fields must be filled in`);
     iziToast.error({
       title: 'Error',
       message: 'The form field must be filled',
@@ -35,9 +36,7 @@ function handleSubmit(event) {
   searchImagesByQuery(sear)
     .then(data => {
       createImagesMarkup(data.hits);
-
       loader.style.display = 'none';
-
       if (data.hits.length == 0) {
         iziToast.error({
           title: 'Error',
@@ -48,6 +47,15 @@ function handleSubmit(event) {
         });
       }
     })
-    .catch()
+    .catch(error => {
+      console.log(error);
+      iziToast.error({
+        title: 'Error',
+        message: 'Oops... Something went wrong.',
+        position: 'topRight',
+        transitionIn: 'bounceInDown',
+      });
+      loader.style.display = 'none';
+    })
     .finally(() => form.reset());
 }
